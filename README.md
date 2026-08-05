@@ -122,7 +122,7 @@ If the improved policy is the same as the old policy, the policy is considered s
 
 ---
 
-## Python Program
+## Program
 
 ```python
 
@@ -237,18 +237,12 @@ env.close()
 ---
 
 ## Result
-
-```text
-
 The FrozenLake-v1 environment was successfully created, and Policy Iteration was implemented. The initial policy was evaluated to compute the state-value function, followed by policy improvement to obtain a better policy. The process was repeated until the policy became stable. The algorithm converged to the optimal state-value function and optimal policy, enabling the agent to maximize the expected cumulative reward in the environment.
 
-```
 ---
 
 ## Inference
-```text
-
 Policy Iteration combines policy evaluation and policy improvement to find the optimal policy. The state-value function increased for states closer to the goal, while hole states retained a value of zero. The optimal policy guides the agent toward the goal while avoiding holes as much as possible. Since the FrozenLake environment is slippery (stochastic), multiple optimal policies may exist, resulting in different but equally optimal action directions.
-```
+
 ---
 
