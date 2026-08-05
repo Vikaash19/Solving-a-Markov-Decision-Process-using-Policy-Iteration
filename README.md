@@ -138,110 +138,53 @@ n_actions = env.action_space.n
 gamma = 0.99
 theta = 1e-8
 
-policy = np.ones((n_states, n_actions)) / n_actions
-
-
-def policy_evaluation(env, policy, gamma=0.99, theta=1e-8):
-
+# -------------------------------------------------
+# Policy Evaluation
+# -------------------------------------------------
+def policy_evaluation(policy, env, gamma=0.99, theta=1e-8):
     V = np.zeros(n_states)
-
     while True:
-
         delta = 0
-
         for s in range(n_states):
-
             v = V[s]
-            value = 0
-
-            for a in range(n_actions):
-
-                action_prob = policy[s][a]
-
+            new_v = 0
+            for a, action_prob in enumerate(policy[s]):
                 for prob, next_state, reward, done in env.P[s][a]:
-                    value += action_prob * prob * (
-                        reward + gamma * V[next_state]
-                    )
-
-            V[s] = value
-            delta = max(delta, abs(v - V[s]))
-
+                    new_v += action_prob * prob * (reward + gamma * V[next_state])
+            V[s] = new_v
+            delta = max(delta, abs(v - new_v))
         if delta < theta:
             break
-
     return V
 
-
-V = policy_evaluation(env, policy, gamma, theta)
-
-print("Policy Evaluation - Value Function")
-print("")
-print(np.round(V.reshape(4,4),4))
-
-
-def policy_improvement(env, V, gamma=0.99):
-
-    policy = np.zeros((n_states,n_actions))
-
+# -------------------------------------------------
+# Policy Improvement
+# -------------------------------------------------
+def policy_improvement(V, env, gamma=0.99):
+    policy = np.zeros((n_states, n_actions))
     for s in range(n_states):
-
         action_values = np.zeros(n_actions)
-
         for a in range(n_actions):
-
-            for prob,next_state,reward,done in env.P[s][a]:
-                action_values[a] += prob*(reward+gamma*V[next_state])
-
-        best_action=np.argmax(action_values)
-
-        policy[s][best_action]=1
-
+            for prob, next_state, reward, done in env.P[s][a]:
+                action_values[a] += prob * (
+                    reward + gamma * V[next_state]
+                )
+        best_action = np.argmax(action_values)
+        policy[s][best_action] = 1.0
     return policy
 
-
-    policy = policy_improvement(env,V,gamma)
-
-action_symbols={
-    0:"←",
-    1:"↓",
-    2:"→",
-    3:"↑"
-}
-
-best_actions=np.argmax(policy,axis=1)
-
-policy_grid=np.array(
-    [action_symbols[a] for a in best_actions]
-).reshape(4,4)
-
-print("Policy Improvement")
-print("")
-print(policy_grid)
-
-
-def policy_iteration(env,policy,gamma=0.99,theta=1e-8):
-
+# -------------------------------------------------
+# Policy Iteration
+# -------------------------------------------------
+def policy_iteration(env, gamma=0.99, theta=1e-8):
+    policy = np.ones((n_states, n_actions)) / n_actions
     while True:
-
-        V=policy_evaluation(env,policy,gamma,theta)
-
-        new_policy=policy_improvement(env,V,gamma)
-
-        if np.array_equal(policy,new_policy):
+        V = policy_evaluation(policy, env, gamma, theta)
+        new_policy = policy_improvement(V, env, gamma)
+        if np.array_equal(policy, new_policy):
             break
-
-        policy=new_policy
-
-    return policy,V
-
-
-optimal_policy,optimal_value_function=policy_iteration(
-    env,
-    policy,
-    gamma,
-    theta
-)
-
+        policy = new_policy
+    return policy, V
 
 # -------------------------------------------------
 # Display Functions
@@ -253,7 +196,6 @@ def print_value_function(V):
 
 
 def print_policy(policy):
-
     action_symbols = {
         0: "←",
         1: "↓",
@@ -262,22 +204,35 @@ def print_policy(policy):
     }
 
     best_actions = np.argmax(policy, axis=1)
-
     policy_grid = np.array(
         [action_symbols[action] for action in best_actions]
     ).reshape(4, 4)
 
+
     print("\nOptimal Policy:")
-    print("")
     print(policy_grid)
 
+# -------------------------------------------------
+# Run Policy Iteration
+# -------------------------------------------------
 
+optimal_policy, optimal_value_function = policy_iteration(
+    env,
+    gamma=gamma,
+    theta=theta
+)
 
+print("Name: Vikaash K S")
+print("Register Number: 212223240179")
+print_value_function(optimal_value_function)
+print_policy(optimal_policy)
 
+env.close()
 
 ```
 
 ## Output
+<img width="462" height="322" alt="exp 3 op" src="https://github.com/user-attachments/assets/2aa416fb-ab6f-4ea5-b8ac-3b2dce42bf39" />
 
 ---
 
